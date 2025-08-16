@@ -1,34 +1,27 @@
 "use client";
 
-import { useSession, signOut } from 'next-auth/react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 const DashboardPage = () => {
   const router = useRouter();
-  const { data: session, status } = useSession({
-    required: true,
-    onUnauthenticated() {
-      router.push('/login');
-    },
-  });
+  const { status } = useSession();
 
-  if (status === "loading") {
-    return <p className='text-center mt-10'>Loading...</p>;
-  }
+  useEffect(() => {
+    // We will add logic here later to check if categories are already set up.
+    // For now, we always redirect to the setup page.
+    if (status === 'authenticated') {
+      router.replace('/add-expense');
+    }
+  }, [status, router]);
 
+  // Display a loading message while the redirect happens
   return (
-    <div className='flex flex-col items-center justify-center min-h-screen -mt-16'>
-      <div className='p-8 bg-slate-800/50 rounded-lg shadow-lg text-center'>
-        <h1 className='text-3xl font-bold mb-4'>Welcome, {session.user?.name}</h1>
-        <p className='text-lg text-gray-300 mb-6'>Signed in as: {session.user?.email}</p>
-        <button
-          onClick={() => signOut({ callbackUrl: '/' })}
-          className='px-6 py-2 text-white bg-red-600 rounded-md hover:bg-red-700'
-        >
-          Logout
-        </button>
-      </div>
+    <div className="flex items-center justify-center min-h-screen">
+      <p className="text-lg">Loading your dashboard...</p>
     </div>
   );
 };
+
 export default DashboardPage;

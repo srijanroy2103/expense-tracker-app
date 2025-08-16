@@ -11,31 +11,23 @@ const RegisterPage = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [passwordError, setPasswordError] = useState(''); // New state for password validation
+  const [passwordError, setPasswordError] = useState('');
 
-  // Function to validate the password
   const validatePassword = () => {
-    // Regex for password strength
     const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/;
     if (password && !passwordRegex.test(password)) {
-      setPasswordError('Password must be 8+ characters and include an uppercase letter, a number, and a special character.');
-    } else {
-      setPasswordError(''); // Clear error if valid or empty
+      setPasswordError('Password needs 8+ characters, an uppercase letter, a number, and a special character.');
+      return false;
     }
+    setPasswordError('');
+    return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setSuccess('');
 
-    // Re-validate password on submit, just in case
-    validatePassword();
-    if (passwordError) {
-      return; // Stop submission if there's a password error
-    }
-
+    if (!validatePassword()) return;
     if (password !== confirmPassword) {
       setError("Passwords do not match.");
       return;
@@ -47,20 +39,19 @@ const RegisterPage = () => {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password }),
       });
-
       const data = await res.json();
+
       if (!res.ok) {
         setError(data.message || 'An error occurred.');
         return;
       }
 
-      setSuccess('Registration successful! Redirecting to login...');
-      setTimeout(() => {
-        router.push('/login');
-      }, 2000);
+      // On successful code dispatch, redirect to the verify page
+      router.push(`/verify?email=${email}`);
 
     } catch (err) {
       setError('An error occurred during registration.');
+      console.error(err);
     }
   };
 
@@ -70,7 +61,7 @@ const RegisterPage = () => {
         <h1 className='text-2xl font-bold text-center'>Create an Account</h1>
         <form onSubmit={handleSubmit} className='space-y-4'>
           {error && <p className='text-red-500 text-center'>{error}</p>}
-          {success && <p className='text-green-500 text-center'>{success}</p>}
+          {/* Form fields remain the same */}
           <div>
             <label htmlFor='name'>Name</label>
             <input type='text' id='name' value={name} onChange={(e) => setName(e.target.value)} required className='w-full px-3 py-2 mt-1 text-white bg-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500' />
@@ -86,11 +77,10 @@ const RegisterPage = () => {
               id='password'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              onBlur={validatePassword} //  <-- Event handler added here
+              onBlur={validatePassword}
               required
               className='w-full px-3 py-2 mt-1 text-white bg-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500'
             />
-            {/* Display password error message here */}
             {passwordError && <p className='text-red-500 text-sm mt-1'>{passwordError}</p>}
           </div>
           <div>
