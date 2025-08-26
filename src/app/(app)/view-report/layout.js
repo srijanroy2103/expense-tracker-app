@@ -1,14 +1,9 @@
-import ReportSidebar from '@/components/ReportSidebar';
-
+// This layout's only job is to create the flex container.
+// It is now a simple Server Component with no client-side logic.
 export default function ReportLayout({ children }) {
   return (
     <div className="flex flex-col md:flex-row gap-8">
-      <aside className="md:w-64 flex-shrink-0">
-        <ReportSidebar />
-      </aside>
-      <div className="flex-1">
-        {children}
-      </div>
+      {children}
     </div>
   );
 }
