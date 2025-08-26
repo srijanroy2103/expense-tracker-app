@@ -21,6 +21,9 @@ export const authOptions = {
           if (!user) {
             throw new Error('No user found with this email.');
           }
+          if (!user.emailVerified) {
+            throw new Error('Please verify your email before logging in.');
+          }
           if (!user.password) {
             throw new Error('Please log in using the method you originally signed up with.');
           }
@@ -30,13 +33,61 @@ export const authOptions = {
           }
           return user;
         } catch (err) {
-          throw new Error(err);
+          throw new Error(err.message || 'An error occurred during login.');
         }
       },
     }),
   ],
-  pages: { signIn: '/login' },
-  session: { strategy: 'jwt' },
+
+  // --- CORRECTED CALLBACKS SECTION ---
+  callbacks: {
+    // The JWT callback is the single source of truth for the session token.
+    async jwt({ token, user, account }) {
+      // The `user` and `account` objects are only passed on the initial sign-in.
+      if (account && user) {
+        await dbConnect();
+        try {
+          // Find the user in our database.
+          let dbUser = await User.findOne({ email: user.email });
+
+          // If the user doesn't exist (e.g., first-time Google login), create them.
+          if (!dbUser) {
+            dbUser = await User.create({
+              email: user.email,
+              name: user.name,
+              image: user.image,
+              emailVerified: true, // Google accounts are verified by default
+            });
+          }
+          
+          // Add the user's unique database ID to the token.
+          token.id = dbUser._id.toString();
+
+        } catch (error) {
+          console.error("Error in JWT callback:", error);
+          return token; // Return original token on error
+        }
+      }
+      return token;
+    },
+
+    // The session callback uses the data from the token to populate the session object.
+    async session({ session, token }) {
+      // The token will always have the ID we added in the jwt callback.
+      if (token && token.id) {
+        session.user.id = token.id;
+      }
+      return session;
+    },
+  },
+  // --- END OF CALLBACKS SECTION ---
+
+  pages: {
+    signIn: '/login',
+  },
+  session: {
+    strategy: 'jwt',
+  },
   secret: process.env.NEXTAUTH_SECRET,
 };
 

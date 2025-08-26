@@ -2,6 +2,7 @@ import { Inter } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/Navbar';
 import AuthProvider from '@/components/AuthProvider';
+import LogoutManager from '@/components/LogoutManager';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -15,6 +16,7 @@ export default function RootLayout({ children }) {
     <html lang='en'>
       <body className={`${inter.className} bg-gradient-to-br from-gray-900 to-slate-800 text-white`}>
         <AuthProvider>
+          <LogoutManager />
           <Navbar />
           <main>{children}</main>
         </AuthProvider>

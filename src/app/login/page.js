@@ -50,6 +50,11 @@ const LoginPage = () => {
             <label htmlFor='password'>Password</label>
             <input type='password' id='password' value={password} onChange={(e) => setPassword(e.target.value)} required className='w-full px-3 py-2 mt-1 text-white bg-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500' />
           </div>
+          <div className='text-right'>
+            <Link href='/forgot-password' className='text-sm text-blue-400 hover:underline'>
+            Forgot Password?
+            </Link>
+          </div>
           <button type='submit' className='w-full py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700'>Login</button>
         </form>
         <div className='flex items-center justify-center space-x-2'><hr className='w-full border-gray-600' /><span className='text-gray-400'>OR</span><hr className='w-full border-gray-600' /></div>

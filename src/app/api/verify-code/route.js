@@ -8,39 +8,28 @@ export async function POST(request) {
     const { email, code } = await request.json();
 
     const user = await User.findOne({ email });
-    console.log('--- DEBUGGING VERIFICATION CODE ---');
-console.log('Code expires at (timestamp from DB):', user.verificationCodeExpires);
-console.log('Current time is (timestamp now):', Date.now());
-console.log('Type of expiry value from DB:', typeof user.verificationCodeExpires);
-console.log('Is code expired?', user.verificationCodeExpires <= Date.now());
-console.log('-----------------------------------');
+
     if (!user) {
-      return NextResponse.json(
-        { message: 'User not found.' },
-        { status: 404 }
-      );
+      return NextResponse.json({ message: 'User not found.' }, { status: 404 });
     }
 
+    // --- SIMPLIFIED LOGIC ---
+    // We only check if the code is valid. The expiration check is removed.
     const isCodeValid = user.verificationCode === code;
-    const isCodeNotExpired = user.verificationCodeExpires > Date.now;
 
-    if (isCodeValid && isCodeNotExpired) {
+    if (isCodeValid) {
       // Mark user as verified and remove the code
       user.emailVerified = true;
-      user.verificationCode = undefined; // As requested, delete the code
-      user.verificationCodeExpires = undefined; // And the expiry
+      user.verificationCode = undefined;
+      user.verificationCodeExpires = undefined; // Also remove the old expiry field
       await user.save();
 
       return NextResponse.json(
         { message: 'Account verified successfully!' },
         { status: 200 }
       );
-    } else if (!isCodeNotExpired) {
-      return NextResponse.json(
-        { message: 'Verification code has expired. Please sign up again to get a new code.' },
-        { status: 400 }
-      );
     } else {
+      // If the code is not valid, return an error.
       return NextResponse.json(
         { message: 'Incorrect verification code.' },
         { status: 400 }
