@@ -5,43 +5,8 @@ import { useState, useEffect, useCallback } from 'react';
 import ReportFilters from '@/components/ReportFilters';
 import ReportTable from '@/components/ReportTable';
 import ReportSidebar from '@/components/ReportSidebar'; // Import the sidebar here
+import CreditCardFilters from '@/components/CreditCardFilters';
 
-// The CreditCardFilters component can remain here or be moved to its own file
-const CreditCardFilters = ({ creditCards, onFilterChange }) => {
-  const [selectedCard, setSelectedCard] = useState('');
-  const [fromDate, setFromDate] = useState('');
-  const [toDate, setToDate] = useState('');
-
-  const handleApply = () => {
-    onFilterChange({ selectedCard, fromDate, toDate });
-  };
-
-  return (
-    <div className="p-4 bg-slate-800/50 rounded-lg border border-slate-700 mb-6 space-y-4">
-      <h3 className="text-lg font-semibold">Filters</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div>
-          <label className="block text-sm">Credit Card</label>
-          <select value={selectedCard} onChange={(e) => setSelectedCard(e.target.value)} className="mt-1 block w-full bg-gray-700 rounded-md p-2 text-sm">
-            <option value="">All Credit Cards</option>
-            {creditCards.map(card => <option key={card._id} value={card.bankName}>{card.bankName}</option>)}
-          </select>
-        </div>
-        <div>
-          <label className="block text-sm">From</label>
-          <input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="mt-1 block w-full bg-gray-700 rounded-md p-2 text-sm" />
-        </div>
-        <div>
-          <label className="block text-sm">To</label>
-          <input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="mt-1 block w-full bg-gray-700 rounded-md p-2 text-sm" />
-        </div>
-      </div>
-      <div className="text-right">
-        <button onClick={handleApply} className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700">Apply</button>
-      </div>
-    </div>
-  );
-};
 
 const ViewReportPageClient = ({ initialCustomCategories, initialCreditCardCategories }) => {
   const searchParams = useSearchParams();
