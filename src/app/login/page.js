@@ -58,7 +58,7 @@ const LoginPage = () => {
           <button type='submit' className='w-full py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700'>Login</button>
         </form>
         <div className='flex items-center justify-center space-x-2'><hr className='w-full border-gray-600' /><span className='text-gray-400'>OR</span><hr className='w-full border-gray-600' /></div>
-        <button onClick={handleGoogleLogin} className='w-full py-2 flex items-center justify-center gap-x-2 text-white bg-red-600 rounded-md hover:bg-red-700' isEnabled={false}>Sign in with Google</button>
+        <button type="button" /*onClick={handleGoogleLogin} */className='w-full py-2 flex items-center justify-center gap-x-2 text-white bg-red-600 rounded-md hover:bg-red-700' disabled>Sign in with Google Currently disabled</button>
         <p className='text-sm text-center text-gray-400'>
           Dont have an account?{' '}
           <Link href='/register' className='font-medium text-blue-500 hover:underline'>Sign Up</Link>
